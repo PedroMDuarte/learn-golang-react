@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import ChannelSection from './channels/ChannelSection.jsx'
 import UserSection from './users/UserSection.jsx'
+import MessageSection from './messages/MessageSection.jsx'
 
 
 class App extends Component{
@@ -8,8 +9,10 @@ class App extends Component{
         super(props)
         this.state = {
             channels: [],
+            activeChannel: {name: ""},
             users: [],
-            activeChannel: {name: ""}
+            activeUser: {user: ""},
+            messages: [],
         }
     }
 
@@ -29,14 +32,42 @@ class App extends Component{
 
     setUserName(name){
         let {users} = this.state
-        console.log(users)
-        console.log(name)
-        if (users.map((user) => user.name).includes(name)) {
+        var user = this.getUser(name)
+        var isNewUser = user.id < users.length
+        if (isNewUser) {
             alert(`User ${name} already exists.`)
-        } else {
-            users.push({id: users.length, name})
         }
-        this.setState({users})
+        else {
+            users.push(user)
+        }
+        this.setState({users, activeUser: user})
+
+        // TODO : Send state to server.
+    }
+
+    getUser(name){
+        let {users} = this.state
+        var user = null
+        if (users.map((u) => u.name).includes(name)) {
+            user = users.filter((user) => user.name === name)[0]
+        } else {
+            user = {id: userId, name}
+        }
+        return(user)
+    }
+
+    addMessage(body){
+        console.log(body)
+        const channel = this.state.activeChannel
+        const authorName = this.state.activeUser.name
+        var message = {
+            author: authorName,
+            createdAt: new Date,
+            body: body,
+            channel: channel
+        }
+        messages.push(message)
+        // TODO : Send state to server
     }
 
     render(){
@@ -49,12 +80,15 @@ class App extends Component{
                         addChannel={this.addChannel.bind(this)}
                         setChannel={this.setChannel.bind(this)}
                     />
-
                     <UserSection
                         users={this.state.users}
                         setUserName={this.setUserName.bind(this)}
                     />
                 </div>
+                <MessageSection
+                    {...this.state}
+                    addMessage={this.addMessage.bind(this)}
+                />
             </div>
         )
     }
