@@ -5,7 +5,6 @@ import Channel from './Channel.jsx'
 
 class ChannelList extends Component{
     render(){
-        console.log(this.props.channels)
         var channels = this.props.channels.map(chan => {
             return (
                 <Channel 
