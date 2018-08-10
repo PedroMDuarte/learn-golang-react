@@ -6,21 +6,29 @@ class MessageForm extends Component{
     onSubmit(e){
         e.preventDefault()
         const node = this.refs.message
-        const messageText = node.value
-        this.props.addMessage(messageText)
+        const body = node.value
+        this.props.addMessage(body)
         node.value = ""
     }
 
     render(){
+        let input
+        var hasCh = this.props.activeChannel.id !== undefined
+        var hasUser = this.props.activeUser.id !== undefined
+        if (hasCh && hasUser) {
+            input = (
+                <input
+                    className="form-control"
+                    placeholder="type a message ..."
+                    type="text"
+                    ref="message"
+                />
+            )
+        }
         return (
             <form onSubmit={this.onSubmit.bind(this)}>
                 <div className="form-group">
-                    <input
-                        className="form-control"
-                        placeholder="type a message ..."
-                        type="text"
-                        ref="message"
-                    />
+                    {input}
                 </div>
             </form>
         )
@@ -28,7 +36,9 @@ class MessageForm extends Component{
 }
 
 MessageForm.propTypes = {
-    addMessage: PropTypes.func.isRequired
+    addMessage: PropTypes.func.isRequired,
+    activeChannel: PropTypes.object.isRequired,
+    activeUser: PropTypes.object.isRequired
 }
 
 export default MessageForm
